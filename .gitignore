@@ -1,0 +1,27 @@
+@'
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+errored.tfstate
+tfplan
+*.tfplan
+crash.log
+*.auto.tfvars
+terraform.tfvars
+
+# Local helper files
+p.json
+p2.json
+hc.json
+hc2.json
+s3.json
+body.json
+out.txt
+*.zip
+
+# OS / editor
+.vscode/
+.idea/
+Thumbs.db
+'@ | Out-File -Encoding ascii .gitignore

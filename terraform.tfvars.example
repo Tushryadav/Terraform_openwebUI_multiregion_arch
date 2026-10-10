@@ -1,0 +1,14 @@
+# -----------------------------------------------------------------------------
+# terraform.tfvars.example
+#
+# Copy this file to terraform.tfvars and fill in real values.
+# NEVER commit terraform.tfvars (it is listed in .gitignore).
+# -----------------------------------------------------------------------------
+
+# Open WebUI session signing secret.
+# Linux/macOS:  openssl rand -hex 32
+# PowerShell:   -join ((1..32) | ForEach-Object { '{0:x2}' -f (Get-Random -Maximum 256) })
+webui_secret_key = "CHANGE_ME_64_hex_characters"
+
+# API key for the OpenAI-compatible model provider (for example NVIDIA build.nvidia.com).
+ai_api_key = "CHANGE_ME_your_provider_api_key"

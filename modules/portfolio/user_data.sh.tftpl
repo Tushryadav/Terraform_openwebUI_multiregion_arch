@@ -1,0 +1,55 @@
+#!/bin/bash
+set -euo pipefail
+
+# 1. Install Docker and the Postgres client
+dnf install -y docker jq postgresql15
+systemctl enable --now docker
+chmod 700 /var/run/docker.sock
+
+# 2. DB credentials
+SECRET=$(aws secretsmanager get-secret-value \
+  --region ${aws_region} \
+  --secret-id portfolio/aurora/master \
+  --query SecretString --output text)
+DB_USER=$(echo "$SECRET" | jq -r .username)
+DB_PASS=$(echo "$SECRET" | jq -r .password)
+DATABASE_URL="postgresql://$DB_USER:$DB_PASS@${db_endpoint}:5432/portfolio"
+export PGPASSWORD="$DB_PASS"
+
+db() { psql -h ${db_endpoint} -U "$DB_USER" -d portfolio -tAc "$1" 2>/dev/null; }
+
+# 3. Wait until the database accepts connections
+until [ "$(db 'select 1')" = "1" ]; do sleep 10; done
+
+%{ if !is_primary ~}
+# 3b. Standby region: answer health checks until this region's DB becomes writable
+mkdir -p /tmp/standby && echo "standby" > /tmp/standby/index.html
+setsid nohup python3 -m http.server 8080 --directory /tmp/standby >/dev/null 2>&1 &
+until [ "$(db 'select pg_is_in_recovery()')" = "f" ]; do sleep 15; done
+pkill -f "http.server 8080" || true
+sleep 2
+%{ endif ~}
+
+# 4. Run Open WebUI
+docker run -d \
+  --name owui \
+  --restart unless-stopped \
+  -p 8080:8080 \
+  --log-driver=awslogs \
+  --log-opt awslogs-region=${aws_region} \
+  --log-opt awslogs-group=${log_group} \
+  -e DATABASE_URL="$DATABASE_URL" \
+  -e VECTOR_DB=pgvector \
+  -e PGVECTOR_DB_URL="$DATABASE_URL" \
+  -e REDIS_URL="${redis_url}" \
+  -e ENABLE_WEBSOCKET_SUPPORT=true \
+  -e WEBSOCKET_MANAGER=redis \
+  -e WEBSOCKET_REDIS_URL="${redis_url}" \
+  -e ENABLE_OPENAI_API=True \
+  -e STORAGE_PROVIDER=s3 \
+  -e S3_BUCKET_NAME="${s3_bucket}" \
+  -e S3_REGION_NAME=${aws_region} \
+  -e WEBUI_SECRET_KEY="${webui_secret_key}" \
+  -e ENABLE_SIGNUP=true \
+  -e ENABLE_OLLAMA_API=false \
+  ghcr.io/open-webui/open-webui:v0.6.5
