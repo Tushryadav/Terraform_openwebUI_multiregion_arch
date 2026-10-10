@@ -1,0 +1,25 @@
+[33m7ea3b6c[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m Initial commit: Terraform Open WebUI infrastructure
+ .gitignore                           |  27 [32m++++[m
+ .terraform.lock.hcl                  |  45 [32m++++++[m
+ README.md                            |  34 [32m+++++[m
+ main.tf                              | 277 [32m+++++++++++++++++++++++++++++++++++[m
+ modules/portfolio/Iam.tf             |  26 [32m++++[m
+ modules/portfolio/alb.tf             |  37 [32m+++++[m
+ modules/portfolio/asg.tf             |  25 [32m++++[m
+ modules/portfolio/aurora.tf          | 108 [32m++++++++++++++[m
+ modules/portfolio/cloudwatch.tf      | 202 [32m+++++++++++++++++++++++++[m
+ modules/portfolio/ec2.tf             | 114 [32m++++++++++++++[m
+ modules/portfolio/endpoints.tf       | 101 [32m+++++++++++++[m
+ modules/portfolio/guardduty.tf       |  27 [32m++++[m
+ modules/portfolio/nacl.tf            | 236 [32m+++++++++++++++++++++++++++++[m
+ modules/portfolio/outputs.tf         |  57 [32m+++++++[m
+ modules/portfolio/redis.tf           |  37 [32m+++++[m
+ modules/portfolio/s3.tf              |  80 [32m++++++++++[m
+ modules/portfolio/sg.tf              |  29 [32m++++[m
+ modules/portfolio/sg_rules.tf        | 107 [32m++++++++++++++[m
+ modules/portfolio/user_data.sh.tftpl |  55 [32m+++++++[m
+ modules/portfolio/variables.tf       |  44 [32m++++++[m
+ modules/portfolio/vpc.tf             |  96 [32m++++++++++++[m
+ modules/portfolio/waf.tf             | 125 [32m++++++++++++++++[m
+ terraform.tfvars.example             |  14 [32m++[m
+ 23 files changed, 1903 insertions(+)
