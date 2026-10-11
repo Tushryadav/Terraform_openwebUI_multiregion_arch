@@ -1,4 +1,3 @@
-@'
 # Terraform
 .terraform/
 *.tfstate
@@ -11,6 +10,8 @@ crash.log
 terraform.tfvars
 
 # Local helper files
+*.zip
+apply.log
 p.json
 p2.json
 hc.json
@@ -18,10 +19,8 @@ hc2.json
 s3.json
 body.json
 out.txt
-*.zip
 
 # OS / editor
 .vscode/
 .idea/
 Thumbs.db
-'@ | Out-File -Encoding ascii .gitignore
